@@ -1,19 +1,20 @@
 # OSSgram
 
-OSSgram is a full-stack Instagram-style social feed clone built with React and Express. It includes a responsive feed UI, profile views, post creation, likes, saves, comments, and a small REST API with JSON-file persistence.
+OSSgram은 React와 Express로 만든 인스타그램 스타일의 풀스택 소셜 피드 클론입니다. 반응형 피드 UI, 프로필 화면, 게시글 작성, 좋아요, 저장, 댓글 기능을 제공하며, 백엔드는 REST API와 JSON 파일 기반 저장 방식을 사용합니다.
 
-## Features
+## 주요 기능
 
-- Responsive Instagram-style feed layout
-- Story rail with user avatars
-- Account switching between seeded users
-- Create posts with image URL, location, and caption
-- Like/unlike and save/unsave posts
-- Add comments to posts
-- Search accounts
-- View user profiles and profile posts
+- 인스타그램 스타일의 반응형 피드 레이아웃
+- 사용자 아바타 기반 스토리 영역
+- 시드 사용자 간 계정 전환
+- 이미지 URL, 위치, 캡션을 입력한 게시글 작성
+- 게시글 좋아요/좋아요 취소
+- 게시글 저장/저장 취소
+- 댓글 작성
+- 계정 검색
+- 사용자 프로필 및 프로필 게시글 조회
 
-## Tech Stack
+## 기술 스택
 
 - Frontend: React, Vite, TypeScript
 - Backend: Express
@@ -21,20 +22,20 @@ OSSgram is a full-stack Instagram-style social feed clone built with React and E
 - Persistence: JSON file storage
 - Icons: lucide-react
 
-## Getting Started
+## 시작하기
 
-### Prerequisites
+### 사전 요구 사항
 
-- Node.js 20 or newer
+- Node.js 20 이상
 - npm
 
-### Installation
+### 설치
 
 ```sh
 npm install
 ```
 
-### Development
+### 개발 서버 실행
 
 ```sh
 npm run dev
@@ -43,14 +44,14 @@ npm run dev
 - Frontend: `http://localhost:5173`
 - Backend: `http://localhost:4000`
 
-### Production Build
+### 프로덕션 빌드
 
 ```sh
 npm run build
 npm start
 ```
 
-## Verification
+## 동작 확인
 
 ```sh
 npm run build
@@ -60,55 +61,55 @@ npm run build
 curl http://localhost:4000/api/health
 ```
 
-Expected response:
+예상 응답:
 
 ```json
 {"ok":true,"service":"ossgram-api"}
 ```
 
-## API Endpoints
+## API 엔드포인트
 
-| Method | Path | Description |
+| Method | Path | 설명 |
 | --- | --- | --- |
-| GET | `/api/feed?userId=u_jinsu` | Load stories and feed posts |
-| GET | `/api/users` | Load accounts |
-| GET | `/api/users/:username` | Load profile and profile posts |
-| POST | `/api/session` | Switch active user |
-| POST | `/api/posts` | Create a post |
-| POST | `/api/posts/:postId/like` | Toggle like |
-| POST | `/api/posts/:postId/save` | Toggle save |
-| POST | `/api/posts/:postId/comments` | Add comment |
+| GET | `/api/feed?userId=u_jinsu` | 스토리와 피드 게시글 조회 |
+| GET | `/api/users` | 사용자 목록 조회 |
+| GET | `/api/users/:username` | 프로필과 프로필 게시글 조회 |
+| POST | `/api/session` | 현재 사용자 전환 |
+| POST | `/api/posts` | 게시글 작성 |
+| POST | `/api/posts/:postId/like` | 좋아요 토글 |
+| POST | `/api/posts/:postId/save` | 저장 토글 |
+| POST | `/api/posts/:postId/comments` | 댓글 작성 |
 
-## Project Structure
+## 프로젝트 구조
 
 ```txt
 .
 ├── server/
-│   └── index.js      Express API server
+│   └── index.js      Express API 서버
 ├── src/
-│   ├── App.tsx       Main React app
-│   ├── main.tsx      React entry point
-│   ├── styles.css    UI styles
-│   └── types.ts      Shared frontend types
+│   ├── App.tsx       메인 React 앱
+│   ├── main.tsx      React 엔트리 포인트
+│   ├── styles.css    UI 스타일
+│   └── types.ts      프론트엔드 타입 정의
 ├── index.html
 ├── package.json
 └── vite.config.ts
 ```
 
-## Data Persistence
+## 데이터 저장
 
-The backend creates `server/data/db.json` automatically on first run. The file is ignored by Git, so local posts, likes, saves, and comments do not get committed.
+백엔드는 최초 실행 시 `server/data/db.json` 파일을 자동으로 생성합니다. 이 파일은 Git 추적 대상에서 제외되어 로컬에서 작성한 게시글, 좋아요, 저장, 댓글 데이터가 커밋되지 않습니다.
 
-## Scripts
+## 스크립트
 
-| Command | Description |
+| Command | 설명 |
 | --- | --- |
-| `npm run dev` | Run frontend and backend development servers |
-| `npm run dev:web` | Run Vite frontend only |
-| `npm run dev:api` | Run Express backend only |
-| `npm run build` | Build the frontend |
-| `npm start` | Run the backend server |
+| `npm run dev` | 프론트엔드와 백엔드 개발 서버 동시 실행 |
+| `npm run dev:web` | Vite 프론트엔드 서버만 실행 |
+| `npm run dev:api` | Express 백엔드 서버만 실행 |
+| `npm run build` | 프론트엔드 빌드 |
+| `npm start` | 백엔드 서버 실행 |
 
-## License
+## 라이선스
 
-This project is for educational clone-coding practice.
+이 프로젝트는 클론코딩 학습 목적으로 제작되었습니다.
