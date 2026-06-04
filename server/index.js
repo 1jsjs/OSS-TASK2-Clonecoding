@@ -15,68 +15,117 @@ const seedData = {
   users: [
     {
       id: "u_jinsu",
-      username: "1jsjs",
-      name: "Park Jinsu",
-      avatar: "https://images.unsplash.com/photo-1500648767791-00dcc994a43e?auto=format&fit=crop&w=160&q=80",
-      bio: "Open source software development student. Building full-stack clones.",
-      website: "github.com/1jsjs",
+      username: "ossgram.dev",
+      name: "OSSgram Demo",
+      avatar: "https://images.unsplash.com/photo-1527980965255-d3b416303d12?auto=format&fit=crop&w=160&q=80",
+      bio: "Full-stack social feed prototype.",
+      website: "github.com/1jsjs/OSS-TASK2-Clonecoding",
       followers: 1328,
       following: 260,
       verified: true
     },
     {
       id: "u_mina",
-      username: "design.mina",
-      name: "Mina Lee",
-      avatar: "https://images.unsplash.com/photo-1544005313-94ddf0286df2?auto=format&fit=crop&w=160&q=80",
-      bio: "Product designer. Photo notes and interface details.",
-      website: "mina.design",
+      username: "metro.frame",
+      name: "Metro Frame",
+      avatar: "https://images.unsplash.com/photo-1508214751196-bcfd4ca60f91?auto=format&fit=crop&w=160&q=80",
+      bio: "City snapshots and layout notes.",
+      website: "metroframe.example",
       followers: 842,
       following: 188,
       verified: false
     },
     {
       id: "u_campus",
-      username: "campus.dev",
-      name: "Campus Dev",
-      avatar: "https://images.unsplash.com/photo-1535713875002-d1d0cf377fde?auto=format&fit=crop&w=160&q=80",
-      bio: "Daily build logs from the campus lab.",
-      website: "campus.dev",
+      username: "daily.build",
+      name: "Daily Build",
+      avatar: "https://images.unsplash.com/photo-1507003211169-0a1dd7228f2d?auto=format&fit=crop&w=160&q=80",
+      bio: "Small product updates every day.",
+      website: "dailybuild.example",
       followers: 2201,
       following: 342,
       verified: true
+    },
+    {
+      id: "u_noon",
+      username: "noon.archive",
+      name: "Noon Archive",
+      avatar: "https://images.unsplash.com/photo-1524504388940-b1c1722653e1?auto=format&fit=crop&w=160&q=80",
+      bio: "Saved references and quiet scenes.",
+      website: "noonarchive.example",
+      followers: 1540,
+      following: 208,
+      verified: false
+    },
+    {
+      id: "u_luma",
+      username: "luma.studio",
+      name: "Luma Studio",
+      avatar: "https://images.unsplash.com/photo-1520813792240-56fc4a3765a7?auto=format&fit=crop&w=160&q=80",
+      bio: "Visual direction for web products.",
+      website: "lumastudio.example",
+      followers: 4901,
+      following: 319,
+      verified: true
+    },
+    {
+      id: "u_byte",
+      username: "byte.garden",
+      name: "Byte Garden",
+      avatar: "https://images.unsplash.com/photo-1517841905240-472988babdf9?auto=format&fit=crop&w=160&q=80",
+      bio: "Backend notes, APIs, and tiny tools.",
+      website: "bytegarden.example",
+      followers: 705,
+      following: 155,
+      verified: false
     }
   ],
   stories: [
-    { id: "s1", userId: "u_jinsu", label: "PR merged", imageUrl: "https://images.unsplash.com/photo-1556075798-4825dfaaf498?auto=format&fit=crop&w=300&q=80", seenBy: [] },
-    { id: "s2", userId: "u_mina", label: "wireframe", imageUrl: "https://images.unsplash.com/photo-1516321318423-f06f85e504b3?auto=format&fit=crop&w=300&q=80", seenBy: ["u_jinsu"] },
-    { id: "s3", userId: "u_campus", label: "backend", imageUrl: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=300&q=80", seenBy: [] }
+    { id: "s1", userId: "u_jinsu", label: "prototype", imageUrl: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=300&q=80", seenBy: [] },
+    { id: "s2", userId: "u_mina", label: "city", imageUrl: "https://images.unsplash.com/photo-1494526585095-c41746248156?auto=format&fit=crop&w=300&q=80", seenBy: ["u_jinsu"] },
+    { id: "s3", userId: "u_campus", label: "release", imageUrl: "https://images.unsplash.com/photo-1515879218367-8466d910aaa4?auto=format&fit=crop&w=300&q=80", seenBy: [] },
+    { id: "s4", userId: "u_noon", label: "archive", imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=300&q=80", seenBy: [] },
+    { id: "s5", userId: "u_luma", label: "studio", imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=300&q=80", seenBy: ["u_jinsu"] },
+    { id: "s6", userId: "u_byte", label: "api", imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=300&q=80", seenBy: [] }
   ],
   posts: [
     {
       id: "p1",
       userId: "u_campus",
-      imageUrl: "https://images.unsplash.com/photo-1497366754035-f200968a6e72?auto=format&fit=crop&w=1200&q=80",
-      caption: "API routes, file persistence, and UI states are all wired together for the clone coding task.",
-      location: "JBNU Lab",
+      imageUrl: "https://images.unsplash.com/photo-1555066931-4365d14bab8c?auto=format&fit=crop&w=1200&q=80",
+      caption: "Feed, comments, likes, saves, and profile data are all served by the Express API.",
+      location: "Product desk",
       createdAt: "2026-06-04T00:35:00.000Z",
       likes: ["u_jinsu", "u_mina"],
       saves: ["u_jinsu"],
       comments: [
-        { id: "c1", userId: "u_jinsu", text: "Front and backend both visible in one workflow.", createdAt: "2026-06-04T01:02:00.000Z" }
+        { id: "c1", userId: "u_jinsu", text: "The backend state updates immediately in the feed.", createdAt: "2026-06-04T01:02:00.000Z" }
       ]
     },
     {
       id: "p2",
       userId: "u_mina",
-      imageUrl: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80",
-      caption: "Polished feed card layout with responsive spacing, story rail, comments, and profile context.",
-      location: "Design desk",
+      imageUrl: "https://images.unsplash.com/photo-1500530855697-b586d89ba3ee?auto=format&fit=crop&w=1200&q=80",
+      caption: "A cleaner home layout with a narrow icon rail, story row, and right-side suggestions.",
+      location: "Layout study",
       createdAt: "2026-06-03T14:12:00.000Z",
       likes: ["u_jinsu"],
       saves: [],
       comments: [
-        { id: "c2", userId: "u_campus", text: "The interaction states make the clone easier to grade.", createdAt: "2026-06-03T14:28:00.000Z" }
+        { id: "c2", userId: "u_luma", text: "This feels much closer to the current desktop feed.", createdAt: "2026-06-03T14:28:00.000Z" }
+      ]
+    },
+    {
+      id: "p3",
+      userId: "u_luma",
+      imageUrl: "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80",
+      caption: "Prototype images and usernames are fictional demo data, not copied from a real following list.",
+      location: "Studio board",
+      createdAt: "2026-06-02T09:18:00.000Z",
+      likes: ["u_jinsu", "u_campus", "u_byte"],
+      saves: ["u_mina"],
+      comments: [
+        { id: "c3", userId: "u_byte", text: "Good call keeping the sample identities synthetic.", createdAt: "2026-06-02T10:05:00.000Z" }
       ]
     }
   ],

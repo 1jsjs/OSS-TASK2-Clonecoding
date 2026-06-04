@@ -1,23 +1,24 @@
 import {
   Bookmark,
-  Camera,
   CheckCircle2,
   Compass,
   Heart,
   Home,
   ImagePlus,
+  Instagram,
+  Menu,
   MessageCircle,
   MoreHorizontal,
   PlusSquare,
   Search,
   Send,
-  UserRound,
-  Users
+  SquarePlay,
+  UserRound
 } from "lucide-react";
 import { FormEvent, useEffect, useMemo, useState } from "react";
 import type { Post, Story, User } from "./types";
 
-const fallbackImage = "https://images.unsplash.com/photo-1516321497487-e288fb19713f?auto=format&fit=crop&w=1200&q=80";
+const fallbackImage = "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80";
 
 async function requestJson<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, {
@@ -59,8 +60,9 @@ export function App() {
   const [query, setQuery] = useState("");
   const [caption, setCaption] = useState("");
   const [imageUrl, setImageUrl] = useState(fallbackImage);
-  const [location, setLocation] = useState("Campus studio");
+  const [location, setLocation] = useState("Studio board");
   const [error, setError] = useState("");
+  const [composerOpen, setComposerOpen] = useState(false);
 
   const userId = currentUser?.id || localStorage.getItem("ossgram:user") || "u_jinsu";
 
@@ -84,9 +86,10 @@ export function App() {
 
   const filteredUsers = useMemo(() => {
     const normalized = query.trim().toLowerCase();
-    if (!normalized) return users;
-    return users.filter((user) => `${user.username} ${user.name} ${user.bio}`.toLowerCase().includes(normalized));
-  }, [query, users]);
+    const source = currentUser ? users.filter((user) => user.id !== currentUser.id) : users;
+    if (!normalized) return source;
+    return source.filter((user) => `${user.username} ${user.name} ${user.bio}`.toLowerCase().includes(normalized));
+  }, [currentUser, query, users]);
 
   async function switchUser(nextUser: User) {
     localStorage.setItem("ossgram:user", nextUser.id);
@@ -146,7 +149,8 @@ export function App() {
       setPosts((items) => [data.post, ...items]);
       setCaption("");
       setImageUrl(fallbackImage);
-      setLocation("Campus studio");
+      setLocation("Studio board");
+      setComposerOpen(false);
     } catch (event) {
       setError(event instanceof Error ? event.message : "Failed to create post");
     }
@@ -156,25 +160,46 @@ export function App() {
     <div className="app-shell">
       <aside className="sidebar" aria-label="Primary">
         <button className="brand" type="button" onClick={() => setProfile(null)} title="Home">
-          <Camera size={28} />
+          <Instagram size={28} />
           <span>OSSgram</span>
         </button>
         <nav className="nav-list">
           <button className="nav-button active" type="button" onClick={() => setProfile(null)} title="Home">
-            <Home size={22} />
+            <Home size={26} />
             <span>Home</span>
           </button>
           <a className="nav-button" href="#search" title="Search">
-            <Search size={22} />
+            <Search size={26} />
             <span>Search</span>
           </a>
-          <a className="nav-button" href="#compose" title="Create post">
-            <PlusSquare size={22} />
+          <button className="nav-button" type="button" title="Explore">
+            <Compass size={26} />
+            <span>Explore</span>
+          </button>
+          <button className="nav-button" type="button" title="Reels">
+            <SquarePlay size={26} />
+            <span>Reels</span>
+          </button>
+          <button className="nav-button with-badge" type="button" title="Messages">
+            <Send size={26} />
+            <span>Messages</span>
+            <em>2</em>
+          </button>
+          <button className="nav-button" type="button" title="Notifications">
+            <Heart size={26} />
+            <span>Notifications</span>
+          </button>
+          <button className="nav-button" type="button" onClick={() => setComposerOpen((value) => !value)} title="Create post">
+            <PlusSquare size={26} />
             <span>Create</span>
-          </a>
+          </button>
           <button className="nav-button" type="button" onClick={() => currentUser && openProfile(currentUser.username)} title="Profile">
-            <UserRound size={22} />
+            {currentUser ? <Avatar user={currentUser} size="sm" /> : <UserRound size={26} />}
             <span>Profile</span>
+          </button>
+          <button className="nav-button menu-button" type="button" title="More">
+            <Menu size={26} />
+            <span>More</span>
           </button>
         </nav>
       </aside>
@@ -182,7 +207,7 @@ export function App() {
       <main className="content">
         <header className="mobile-header">
           <button className="brand compact" type="button" onClick={() => setProfile(null)} title="Home">
-            <Camera size={24} />
+            <Instagram size={24} />
             <span>OSSgram</span>
           </button>
           <button className="icon-button" type="button" title="Direct messages" aria-label="Direct messages">
@@ -205,34 +230,36 @@ export function App() {
               ))}
             </section>
 
-            <section className="composer" id="compose" aria-label="Create post">
-              <div className="composer-heading">
-                {currentUser && <Avatar user={currentUser} />}
-                <div>
-                  <h2>새 게시글</h2>
-                  <p>백엔드 API로 저장되는 게시글을 작성합니다.</p>
+            {composerOpen && (
+              <section className="composer" id="compose" aria-label="Create post">
+                <div className="composer-heading">
+                  {currentUser && <Avatar user={currentUser} />}
+                  <div>
+                    <h2>새 게시글</h2>
+                    <p>작성한 게시글은 백엔드 API로 저장됩니다.</p>
+                  </div>
                 </div>
-              </div>
-              <form onSubmit={createPost} className="composer-form">
-                <label>
-                  <span>Image URL</span>
-                  <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="https://..." />
-                </label>
-                <label>
-                  <span>Location</span>
-                  <input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Location" />
-                </label>
-                <label className="wide">
-                  <span>Caption</span>
-                  <textarea value={caption} onChange={(event) => setCaption(event.target.value)} placeholder="What are you building today?" rows={3} />
-                </label>
-                <button className="primary-button" type="submit">
-                  <ImagePlus size={18} />
-                  <span>Post</span>
-                </button>
-              </form>
-              {error && <p className="error">{error}</p>}
-            </section>
+                <form onSubmit={createPost} className="composer-form">
+                  <label>
+                    <span>Image URL</span>
+                    <input value={imageUrl} onChange={(event) => setImageUrl(event.target.value)} placeholder="https://..." />
+                  </label>
+                  <label>
+                    <span>Location</span>
+                    <input value={location} onChange={(event) => setLocation(event.target.value)} placeholder="Location" />
+                  </label>
+                  <label className="wide">
+                    <span>Caption</span>
+                    <textarea value={caption} onChange={(event) => setCaption(event.target.value)} placeholder="Write a caption..." rows={3} />
+                  </label>
+                  <button className="primary-button" type="submit">
+                    <ImagePlus size={18} />
+                    <span>공유</span>
+                  </button>
+                </form>
+                {error && <p className="error">{error}</p>}
+              </section>
+            )}
 
             <section className="feed" aria-label="Feed">
               {posts.map((post) => (
@@ -253,17 +280,20 @@ export function App() {
               </button>
               <p>{currentUser.name}</p>
             </div>
+            <button className="switch-button" type="button">
+              전환
+            </button>
           </section>
         )}
 
-        <section className="panel" id="search">
-          <div className="panel-title">
-            <Search size={18} />
-            <h2>Search accounts</h2>
+        <section className="suggestions" id="search">
+          <div className="suggestions-header">
+            <h2>회원님을 위한 추천</h2>
+            <button type="button">모두 보기</button>
           </div>
-          <input className="search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="username, name, bio" />
+          <input className="search-input" value={query} onChange={(event) => setQuery(event.target.value)} placeholder="계정 검색" />
           <div className="user-list">
-            {filteredUsers.map((user) => (
+            {filteredUsers.slice(0, 5).map((user) => (
               <div className="user-row" key={user.id}>
                 <button className="profile-button" type="button" onClick={() => openProfile(user.username)}>
                   <Avatar user={user} />
@@ -276,20 +306,14 @@ export function App() {
                   </span>
                 </button>
                 <button className="small-button" type="button" onClick={() => switchUser(user)}>
-                  Use
+                  팔로우
                 </button>
               </div>
             ))}
           </div>
         </section>
 
-        <section className="panel facts">
-          <div className="panel-title">
-            <Users size={18} />
-            <h2>Backend coverage</h2>
-          </div>
-          <p>REST API handles feed loading, account switching, post creation, likes, saves, comments, and profile queries.</p>
-        </section>
+        <footer className="site-footer">소개 · 도움말 · 홍보 센터 · API · 개인정보처리방침 · 위치 · 언어</footer>
       </aside>
     </div>
   );
@@ -379,13 +403,19 @@ function PostCard({
             <strong>
               {post.author.username}
               {post.author.verified && <Verified />}
+              <small className="inline-time"> · {timeAgo(post.createdAt)}</small>
             </strong>
             <small>{post.location || "OSSgram"}</small>
           </span>
         </button>
-        <button className="icon-button" type="button" title="More" aria-label="More options">
-          <MoreHorizontal size={20} />
-        </button>
+        <div className="post-header-actions">
+          <button className="follow-link" type="button">
+            팔로우
+          </button>
+          <button className="icon-button" type="button" title="More" aria-label="More options">
+            <MoreHorizontal size={20} />
+          </button>
+        </div>
       </header>
       <img className="post-image" src={post.imageUrl} alt={`${post.author.username} post`} />
       <div className="post-actions">
