@@ -19,7 +19,7 @@ import { FormEvent, useEffect, useMemo, useRef, useState } from "react";
 import type { Post, Story, User } from "./types";
 
 const fallbackImage = "https://images.unsplash.com/photo-1518005020951-eccb494ad742?auto=format&fit=crop&w=1200&q=80";
-type ActiveView = "feed" | "explore" | "reels" | "messages" | "notifications" | "more";
+type ActiveView = "feed" | "search" | "explore" | "reels" | "messages" | "notifications" | "more";
 
 async function requestJson<T>(url: string, options?: RequestInit): Promise<T> {
   const response = await fetch(url, {
@@ -127,13 +127,6 @@ export function App() {
     setProfile(null);
     setActiveView(view);
     setComposerOpen(false);
-  }
-
-  function focusSearch() {
-    setProfile(null);
-    setActiveView("feed");
-    setComposerOpen(false);
-    window.setTimeout(() => searchInputRef.current?.focus(), 0);
   }
 
   function toggleFollow(user: User) {
@@ -245,7 +238,7 @@ export function App() {
             <Home size={26} />
             <span>Home</span>
           </button>
-          <button className="nav-button" type="button" onClick={focusSearch} title="Search">
+          <button className={`nav-button ${activeView === "search" ? "active" : ""}`} type="button" onClick={() => openView("search")} title="Search">
             <Search size={26} />
             <span>Search</span>
           </button>
@@ -319,6 +312,8 @@ export function App() {
             currentUser={currentUser}
             followedUsers={followedUsers}
             posts={posts}
+            query={query}
+            setQuery={setQuery}
             users={users}
             view={activeView}
             onBack={goHome}
@@ -474,6 +469,8 @@ function UtilityView({
   currentUser,
   followedUsers,
   posts,
+  query,
+  setQuery,
   users,
   view,
   onBack,
@@ -484,6 +481,8 @@ function UtilityView({
   currentUser: User | null;
   followedUsers: Set<string>;
   posts: Post[];
+  query: string;
+  setQuery: (value: string) => void;
   users: User[];
   view: ActiveView;
   onBack: () => void;
@@ -491,15 +490,39 @@ function UtilityView({
   onNotify: (message: string) => void;
   onProfile: (username: string) => void;
 }) {
+  const [playingReelId, setPlayingReelId] = useState<string | null>(null);
+  const utilitySearchRef = useRef<HTMLInputElement>(null);
   const otherUsers = currentUser ? users.filter((user) => user.id !== currentUser.id) : users;
+  const normalizedQuery = query.trim().toLowerCase();
+  const searchResults = normalizedQuery
+    ? otherUsers.filter((user) => `${user.username} ${user.name} ${user.bio}`.toLowerCase().includes(normalizedQuery))
+    : otherUsers;
   const titleMap: Record<ActiveView, string> = {
     feed: "홈",
+    search: "검색",
     explore: "탐색",
     reels: "릴스",
     messages: "메시지",
     notifications: "알림",
     more: "더보기"
   };
+
+  useEffect(() => {
+    if (view === "search") {
+      window.setTimeout(() => utilitySearchRef.current?.focus(), 0);
+    }
+  }, [view]);
+
+  function toggleReel(post: Post) {
+    setPlayingReelId((current) => {
+      if (current === post.id) {
+        onNotify("릴스를 일시정지했습니다.");
+        return null;
+      }
+      onNotify(`${post.author.username} 릴스를 재생 중입니다.`);
+      return post.id;
+    });
+  }
 
   return (
     <section className="utility-view">
@@ -509,6 +532,38 @@ function UtilityView({
         </button>
         <h1>{titleMap[view]}</h1>
       </header>
+
+      {view === "search" && (
+        <div className="search-view">
+          <label>
+            <span>계정 검색</span>
+            <input ref={utilitySearchRef} value={query} onChange={(event) => setQuery(event.target.value)} placeholder="이름, 사용자 이름, 소개 검색" />
+          </label>
+          <div className="search-result-list">
+            {searchResults.length === 0 ? (
+              <p className="empty-state">검색 결과가 없습니다.</p>
+            ) : (
+              searchResults.map((user) => (
+                <article className="search-result-row" key={user.id}>
+                  <button className="profile-button" type="button" onClick={() => onProfile(user.username)}>
+                    <Avatar user={user} />
+                    <span>
+                      <strong>
+                        {user.username}
+                        {user.verified && <Verified />}
+                      </strong>
+                      <small>{user.name}</small>
+                    </span>
+                  </button>
+                  <button className={`small-button ${followedUsers.has(user.id) ? "following" : ""}`} type="button" onClick={() => onFollow(user)}>
+                    {followedUsers.has(user.id) ? "팔로잉" : "팔로우"}
+                  </button>
+                </article>
+              ))
+            )}
+          </div>
+        </div>
+      )}
 
       {view === "explore" && (
         <div className="explore-grid">
@@ -524,16 +579,19 @@ function UtilityView({
       {view === "reels" && (
         <div className="reels-list">
           {posts.map((post) => (
-            <article className="reel-card" key={post.id}>
-              <img src={post.imageUrl} alt={`${post.author.username} reel`} />
+            <article className={`reel-card ${playingReelId === post.id ? "playing" : ""}`} key={post.id}>
+              <button className="reel-preview" type="button" onClick={() => toggleReel(post)} aria-label={`${post.author.username} reel preview`}>
+                <img src={post.imageUrl} alt={`${post.author.username} reel`} />
+                <span>{playingReelId === post.id ? "재생 중" : "재생"}</span>
+              </button>
               <div>
                 <button className="profile-button" type="button" onClick={() => onProfile(post.author.username)}>
                   <Avatar user={post.author} />
                   <strong>{post.author.username}</strong>
                 </button>
                 <p>{post.caption}</p>
-                <button className="small-button" type="button" onClick={() => onNotify("릴스를 재생했습니다.")}>
-                  재생
+                <button className="small-button" type="button" onClick={() => toggleReel(post)}>
+                  {playingReelId === post.id ? "일시정지" : "재생"}
                 </button>
               </div>
             </article>
